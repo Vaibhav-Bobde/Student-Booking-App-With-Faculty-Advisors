@@ -18,20 +18,20 @@
                             <fieldset>
                                 <legend>Log In</legend>
 
-                                <div class="editor-label">
-                                    @Html.LabelFor(model => model.Uname, "User Name")
+                                <div class="editor-label">                                    
+                                    @Html.LabelFor(model => model.EmailId, "User Name")
                                 </div>
                                 <div class="editor-field">
-                                    @Html.TextBoxFor(model => model.Uname, new { @class = "input-text", placeholder = "Username" })
-                                    @Html.ValidationMessageFor(model => model.Uname)
+                                    @Html.TextBoxFor(model => model.EmailId, new { @class = "input-text", placeholder = "Username" })
+                                    @Html.ValidationMessageFor(model => model.EmailId)
                                 </div>
 
                                 <div class="editor-label">
-                                    @Html.LabelFor(model => model.Password, "Password")
+                                    @Html.LabelFor(model => model.Pwd, "Password")
                                 </div>
                                 <div class="editor-field">
-                                    @Html.TextBoxFor(model => model.Password, new { @class = "input-text", placeholder = "Password" })
-                                    @Html.ValidationMessageFor(model => model.Password)
+                                    @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text", placeholder = "Password" })
+                                    @Html.ValidationMessageFor(model => model.Pwd)
                                 </div>
 
                                 <p>

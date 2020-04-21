@@ -5,13 +5,85 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/themes/base/css")
     @*@Styles.Render("~/Content/bootstrap")*@
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    <style>
+        .hide-focusout {
+
+        }
+    </style>
 </head>
 <body>
+    <!-- Navigation -->    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+        <div class="border border-light rounded" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">
+                        <h5>Faculty Appointment System</h5>
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        @if (User != null)
+        {
+        <div class="container" style="width:70%">
+            <a class="navbar-brand collapse navbar-collapse" href="#">
+                <h6 class="ml-auto">Hello @(User.Role.Equals("Faculty") ? "Prof. " + User.LastName : User.FirstName)!</h6>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">
+                            @ViewBag.Title
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="~/Account/LogOut">Log Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        }
+    </nav>
+
     @RenderBody()
 
-    @Scripts.Render("~/bundles/jquery")
+   
     @RenderSection("scripts", required: false)
+    
+    <script>
+
+        var Common = {
+            hideOnFocusOut: function () {
+                $(".hide-focusout").focusout(function () {
+                    $('.hide-focusout').animate({
+                        display: "none"
+                    });
+                })                
+            },
+            onPageLoad: function () {
+                var _this = this;
+                $(document).ready(function () {
+                    Object.values(_this).map(value => {
+                        if (typeof value === 'function' && value.name === 'hideOnFocusOut') {
+                            value.call();
+                        }
+                    })
+                });
+            }
+        }
+        Common.onPageLoad();
+    </script>
 </body>
 </html>

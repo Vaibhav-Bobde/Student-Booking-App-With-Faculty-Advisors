@@ -1,0 +1,106 @@
+﻿@model IList<WebApp.Models.Schedule>
+@{
+    ViewBag.Title = "Update Schedule";
+}
+
+<div class="mt-4 text-center">
+    <h4>Please update your schedule for each day</h4>
+</div>
+<div class="mt-5 offset-sm-1 mr-5 form-group">
+    <table id="tblSchedule" class="table table-bordered table-sm table-hover text-center table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Days</th>
+                <th scope="col">Available From Time</th>
+                <th scope="col">Available Till Time</th>
+                <th style="width:20%" scope="col">Unavailable for entire day</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                var strChecked = item.IsUnavailableEntireDay ? "checked" : string.Empty;
+                var strDisabled = item.IsUnavailableEntireDay ? "disabled" : string.Empty;
+                var strFromTime = item.AvailableFromTime.HasValue ? item.AvailableFromTime.Value.ToString(@"hh\:mm") : string.Empty;
+                var strTillTime = item.AvailableTillTime.HasValue ? item.AvailableTillTime.Value.ToString(@"hh\:mm") : string.Empty;
+                <tr>
+                    <th name="Day" scope="row">@item.Day</th>
+                    <td><input name="AvailableFromTime" class="form-control-sm" value="@strFromTime" @strDisabled /></td>
+                    <td><input name="AvailableTillTime" class="form-control-sm" value="@strTillTime" @strDisabled /></td>
+                    <td style="width:20%"><input name="IsUnavailableEntireDay" class="form-control-sm" type="checkbox" @strChecked /></td>
+                </tr>
+            }            
+        </tbody>
+    </table>
+    <div class="text-center">
+        <button type="button" id="btnUpdateSchedule" class="ui-button btn-success">Update Schedule</button>
+    </div>
+</div>
+<div class="hide-focusout alert alert-success text-center" role="alert" style="display: none;">
+    Schedule Updated Successfully!
+</div>
+<div class="hide-focusout alert alert-danger text-center" role="alert" style="display: none;">    
+    Oops!....There was some error! Please try again later.
+</div>
+<script>
+    $(document).ready(function () {
+        var facId = @ViewBag.FacultyId;
+        $('#tblSchedule input[name^=Available]').timepicker({
+            'minTime': '8:00am',
+            'maxTime': '6:00pm',
+            'timeFormat': 'H:i'
+        });
+        $('input[type=checkbox]').change(function (e) {
+            if (this.checked == true) {
+                $(this).parents('tr').find(':text').prop('disabled', true);
+            }
+            else {
+                $(this).parents('tr').find(':text').prop('disabled', false);
+            }
+        });
+        $('#btnUpdateSchedule').click(function (e) {
+            data = {
+                lstSchedule : []
+            };
+            $('#tblSchedule tbody tr').each(function (index, ele) {
+                var objSchedule = {
+                    FacultyId : '@ViewBag.FacultyId',
+                    Day: $('th[name=Day]', ele).text(),
+                    AvailableFromTime: $('input[name=AvailableFromTime]', ele).val(),
+                    AvailableTillTime: $('input[name=AvailableTillTime]', ele).val(),
+                    IsUnavailableEntireDay: $('input[name=IsUnavailableEntireDay]', ele).prop('checked')
+                }
+                data.lstSchedule.push(objSchedule);
+            });
+            $.ajax({
+                url: '@Url.Action("UpdateFacultySchedule", "Faculty")',
+                data: JSON.stringify(data.lstSchedule),
+                async: false,
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result, status, xhr) {
+                    $('.alert-success').fadeIn();
+                },
+                error: function (xhr, status, error) {
+                    $('.alert-danger').fadeIn();
+                }
+            });
+        });
+        $("#tblSchedule").click(function () {            
+            $('.hide-focusout').fadeOut();
+        });
+    });
+    function toDate(dStr, format) {
+        var now = new Date();
+        if (format == "h:m") {
+            now.setHours(dStr.substr(0, dStr.indexOf(":")));
+            now.setMinutes(dStr.substr(dStr.indexOf(":") + 1));
+            now.setSeconds(0);
+            return now;
+        } else
+            return "Invalid Format";
+    }
+    var myDate = new Date('0001-01-01T00:00:00Z');
+    console.log(myDate.getUTCFullYear());
+</script>

@@ -1,15 +1,13 @@
-﻿body {
+﻿/*body {
     font-size: .85em;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
-    /*color: #232323;
-    background-color: #fff;*/
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;    
     background: #007bff;
     background: linear-gradient(to right, #0062E6, #33AEFF);
 }
 
 header, footer, nav, section {
     display: block;
-}
+}*/
 
 
 /* Styles for basic forms

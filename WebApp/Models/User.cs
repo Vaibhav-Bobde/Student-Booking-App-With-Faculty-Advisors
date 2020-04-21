@@ -7,9 +7,11 @@ namespace WebApp.Models
 {
     public class User
     {
-        public string  Uname { get; set; }
-        public string Password { get; set; }
-        public int RoleId { get; set; }
-        public string Name { get; set; }
+        public int Uid { get; set; }
+        public string EmailId { get; set; }
+        public string Pwd { get; set; }
+        public string Fname { get; set; }
+        public string Lname { get; set; }
+        public int? RoleId { get; set; }
     }
 }
