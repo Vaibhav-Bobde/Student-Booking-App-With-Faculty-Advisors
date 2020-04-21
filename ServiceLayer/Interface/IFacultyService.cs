@@ -6,7 +6,7 @@ using ServiceLayer.Models;
 
 namespace ServiceLayer.Interface
 {
-    public interface IFacultyService
+    public interface IScheduleService
     {
         Faculty FetchFaculty(int userId);
         bool UpdateSchedule(IList<Schedule> lstSchedule);

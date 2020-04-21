@@ -14,7 +14,7 @@ namespace WebApp.Controllers
         {
 
         }
-        public ActionResult SetAppointment()
+        public ActionResult StudentAppointment()
         {
             return View();
         }

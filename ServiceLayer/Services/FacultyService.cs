@@ -7,7 +7,7 @@ using ServiceLayer.Models;
 
 namespace ServiceLayer.Services
 {
-    public class FacultyService : BaseService, IFacultyService
+    public class ScheduleService : BaseService, IScheduleService
     {
         public Faculty FetchFaculty(int userId)
         {

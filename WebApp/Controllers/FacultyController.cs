@@ -10,17 +10,17 @@ namespace WebApp.Controllers
 {
     public class FacultyController : BaseController
     {
-        private readonly IFacultyService _facultyService;
-        public FacultyController(IFacultyService facultyService, IMapper mapper)
+        private readonly IScheduleService _scheduleService;
+        public FacultyController(IScheduleService scheduleService, IMapper mapper)
             : base(mapper)
         {
-            this._facultyService = facultyService;
+            this._scheduleService = scheduleService;
         }
         [HttpGet]
         public ActionResult GetFacultySchedule()
         {
-            Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_facultyService.FetchFaculty(User.Id));
-            IList<Schedule> schedules = _mapper.Map<IList<ServiceLayer.Models.Schedule>, IList<Schedule>>(_facultyService.FetchSchedule(faculty.FacultyId));
+            Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_scheduleService.FetchFaculty(User.Id));
+            IList<Schedule> schedules = _mapper.Map<IList<ServiceLayer.Models.Schedule>, IList<Schedule>>(_scheduleService.FetchSchedule(faculty.FacultyId));
             ViewBag.FacultyId = faculty.FacultyId;
             return View(schedules);
         }
@@ -28,7 +28,7 @@ namespace WebApp.Controllers
         public JsonResult UpdateFacultySchedule(IList<Models.Schedule> lstSchedule)
         {
             IList<ServiceLayer.Models.Schedule> schedules = _mapper.Map<IList<Schedule>, IList<ServiceLayer.Models.Schedule>>(lstSchedule);
-            bool success = _facultyService.UpdateSchedule(schedules);
+            bool success = _scheduleService.UpdateSchedule(schedules);
             return Json(success);
         }
     }

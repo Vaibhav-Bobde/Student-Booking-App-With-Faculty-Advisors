@@ -43,7 +43,7 @@ namespace WebApp.Common
             container.Register(Classes.FromThisAssembly().BasedOn<IController>().LifestyleTransient());
 
             container.Register(Component.For<IUserService>().ImplementedBy<UserService>());
-            container.Register(Component.For<IFacultyService>().ImplementedBy<FacultyService>());
+            container.Register(Component.For<IScheduleService>().ImplementedBy<ScheduleService>());
         }
     }
 }
