@@ -8,7 +8,7 @@ namespace ServiceLayer.Interface
 {
     public interface IFacultyService
     {
-        Faculty FetchFaculty(string fname, string lname);
+        Faculty FetchFaculty(int userId);
         bool UpdateSchedule(IList<Schedule> lstSchedule);
         IList<Schedule> FetchSchedule(int facultyId);
     }

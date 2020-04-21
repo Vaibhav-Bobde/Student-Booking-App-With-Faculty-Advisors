@@ -27,14 +27,6 @@ namespace DAL
                 .Property(e => e.DeptName)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Faculty>()
-                .Property(e => e.Fname)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Faculty>()
-                .Property(e => e.Lname)
-                .IsUnicode(false);
-
             modelBuilder.Entity<Student>()
                 .Property(e => e.CWID)
                 .IsUnicode(false);

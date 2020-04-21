@@ -20,9 +20,9 @@ namespace DAL
             user.UserRole = facAppData.UserRoles.Where(r => r.RoleId == user.RoleId).Single();
             return user;
         }
-        public Faculty FetchFaculty(string fname, string lname)
+        public Faculty FetchFaculty(int userId)
         {
-            Faculty faculty = facAppData.Faculties.Where(w => w.Fname.Equals(fname) && w.Lname.Equals(lname)).DefaultIfEmpty(null).FirstOrDefault();
+            Faculty faculty = facAppData.Faculties.Where(w => w.Uid == userId).DefaultIfEmpty(null).FirstOrDefault();
             return faculty;
         }
         public bool UpdateSchedule(IList<Schedule> newSchedules)

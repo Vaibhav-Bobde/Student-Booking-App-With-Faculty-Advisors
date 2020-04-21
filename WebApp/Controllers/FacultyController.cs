@@ -19,7 +19,7 @@ namespace WebApp.Controllers
         [HttpGet]
         public ActionResult GetFacultySchedule()
         {
-            Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_facultyService.FetchFaculty(User.FirstName, User.LastName));
+            Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_facultyService.FetchFaculty(User.Id));
             IList<Schedule> schedules = _mapper.Map<IList<ServiceLayer.Models.Schedule>, IList<Schedule>>(_facultyService.FetchSchedule(faculty.FacultyId));
             ViewBag.FacultyId = faculty.FacultyId;
             return View(schedules);

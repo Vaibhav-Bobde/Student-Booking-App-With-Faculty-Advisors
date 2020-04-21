@@ -25,6 +25,10 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public ActionResult Login()
         {
+            if(User != null && User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Home");
+            }
             return View();
         }
         

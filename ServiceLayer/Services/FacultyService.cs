@@ -9,9 +9,9 @@ namespace ServiceLayer.Services
 {
     public class FacultyService : BaseService, IFacultyService
     {
-        public Faculty FetchFaculty(string fname, string lname)
+        public Faculty FetchFaculty(int userId)
         {
-            DAL.Faculty faculty = base.facAppDataRepo.FetchFaculty(fname, lname);
+            DAL.Faculty faculty = base.facAppDataRepo.FetchFaculty(userId);
             return _mapper.Map<DAL.Faculty, Faculty>(faculty);
         }
         public bool UpdateSchedule(IList<Schedule> lstSchedule)

@@ -12,11 +12,6 @@
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
-    <style>
-        .hide-focusout {
-
-        }
-    </style>
 </head>
 <body>
     <!-- Navigation -->    
@@ -65,25 +60,29 @@
     <script>
 
         var Common = {
-            hideOnFocusOut: function () {
-                $(".hide-focusout").focusout(function () {
-                    $('.hide-focusout').animate({
-                        display: "none"
-                    });
-                })                
+            hideMessage: function () {                
+                $(".temp-message").fadeOut();
+            },
+            showMessage: function (ele) {
+                $(ele).fadeIn();                
             },
             onPageLoad: function () {
-                var _this = this;
-                $(document).ready(function () {
-                    Object.values(_this).map(value => {
-                        if (typeof value === 'function' && value.name === 'hideOnFocusOut') {
-                            value.call();
-                        }
-                    })
-                });
+                //var _this = this;
+                //$(document).ready(function () {
+                //    Object.values(_this).map(value => {
+                //        if (typeof value === 'function' && value.name === 'hideOnFocusOut') {
+                //            value.call();
+                //        }
+                //    })
+                //    $(".hide-focusout").focusout(function () {
+                //        $('.hide-focusout').animate({
+                //            display: "none"
+                //        });
+                //    })
+                //});
             }
         }
-        Common.onPageLoad();
+        //Common.onPageLoad();
     </script>
 </body>
 </html>

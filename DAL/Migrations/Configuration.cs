@@ -9,8 +9,8 @@ namespace DAL.Migrations
     {
         public Configuration()
         {
-            base.AutomaticMigrationDataLossAllowed = false;
-            base.AutomaticMigrationsEnabled = false;
+            base.AutomaticMigrationDataLossAllowed = true;
+            base.AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(DAL.FacultyAppData context)

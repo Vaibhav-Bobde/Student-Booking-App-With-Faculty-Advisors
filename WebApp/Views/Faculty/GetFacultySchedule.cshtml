@@ -33,13 +33,13 @@
         </tbody>
     </table>
     <div class="text-center">
-        <button type="button" id="btnUpdateSchedule" class="ui-button btn-success">Update Schedule</button>
+        <button type="button" id="btnUpdateSchedule" class="btn btn-success">Update Schedule</button>
     </div>
 </div>
-<div class="hide-focusout alert alert-success text-center" role="alert" style="display: none;">
-    Schedule Updated Successfully!
+<div class="temp-message alert alert-success text-center" role="alert" style="display: none;">
+    <label>Schedule Updated Successfully!</label>
 </div>
-<div class="hide-focusout alert alert-danger text-center" role="alert" style="display: none;">    
+<div class="temp-message alert alert-danger text-center" role="alert" style="display: none;">    
     Oops!....There was some error! Please try again later.
 </div>
 <script>
@@ -80,15 +80,15 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (result, status, xhr) {
-                    $('.alert-success').fadeIn();
+                    Common.showMessage($('.alert-success'));
                 },
                 error: function (xhr, status, error) {
-                    $('.alert-danger').fadeIn();
+                    Common.showMessage($('.alert-danger'));
                 }
             });
         });
         $("#tblSchedule").click(function () {            
-            $('.hide-focusout').fadeOut();
+            $('.temp-message').fadeOut();
         });
     });
     function toDate(dStr, format) {
