@@ -31,14 +31,6 @@ namespace DAL
                 .Property(e => e.CWID)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<Student>()
-                .Property(e => e.Fname)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<Student>()
-                .Property(e => e.Lname)
-                .IsUnicode(false);
-
             modelBuilder.Entity<Schedule>()
                 .Property(e => e.Day)
                 .IsUnicode(false);

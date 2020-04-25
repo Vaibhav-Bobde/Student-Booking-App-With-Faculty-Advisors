@@ -53,5 +53,98 @@ namespace DAL
         {
             return facAppData.Schedules.Where(w => w.FacultyId == facultyId).ToList();
         }
+
+        public IList<Department> FetchAllDepartments()
+        {
+            return facAppData.Departments.ToList();
+        }
+
+        public IList<Faculty> FetchAllFacultiesOfDepartment(int deptId)
+        {
+            IList<Faculty> faculties =  facAppData.Faculties.Where(a => a.DeptId == deptId).ToList();
+            foreach (var faculty in faculties)
+            {
+                faculty.User = facAppData.Users.Where(a => a.Uid == faculty.Uid).FirstOrDefault();
+            }
+            return faculties;
+        }
+        public Schedule FetchScheduleForDayOfWeekOfFaculty(int facultyId, string dayOfWeek)
+        {
+            return facAppData.Schedules.Where(a => a.FacultyId == facultyId && a.Day == dayOfWeek && !a.IsUnavailableEntireDay).FirstOrDefault();
+        }
+        public IList<Appointment> FetchScheduledAppointments(int facultyId, DateTime selDate)
+        {
+            return facAppData.Appointments.Where( j => j.FacultyId == facultyId
+                                   && j.StartTime.Year == selDate.Year
+                                   && j.StartTime.Month == selDate.Month
+                                   && j.StartTime.Day == selDate.Day
+                                   && j.IsOnWaitList == false).OrderBy(o => o.StartTime).ToList();            
+        }
+        public Student FetchStudentBasedOnUserId(int userId)
+        {
+            return facAppData.Students.Where(a => a.Uid == userId).FirstOrDefault();
+        }
+        public bool SaveAppointment(Appointment appointment)
+        {
+            var existingWaitListAppointment = facAppData.Appointments.Where(j => j.FacultyId == appointment.FacultyId
+                                  && j.StudentId == appointment.StudentId
+                                  && j.StartTime.Year == appointment.StartTime.Year
+                                  && j.StartTime.Month == appointment.StartTime.Month
+                                  && j.StartTime.Day == appointment.StartTime.Day
+                                  && j.IsOnWaitList == true).FirstOrDefault();
+            if(existingWaitListAppointment != null)
+            {
+                if(appointment.IsOnWaitList)
+                {
+                    return false;
+                }
+                facAppData.Appointments.Remove(existingWaitListAppointment);
+            }
+            facAppData.Appointments.Add(new Appointment()
+            {
+                FacultyId = appointment.FacultyId,
+                StudentId = appointment.StudentId,
+                StartTime = appointment.StartTime,
+                EndTime = appointment.EndTime,
+                AppointmentHappened = appointment.AppointmentHappened,
+                IsOnWaitList = appointment.IsOnWaitList
+            });
+            facAppData.SaveChanges();
+            return true;
+        }
+        public bool AddToWaitList(Appointment appointment)
+        {
+            var existingWaitListAppointment = facAppData.Appointments.Where(j => j.FacultyId == appointment.FacultyId
+                                  && j.StudentId == appointment.StudentId
+                                  && j.StartTime.Year == appointment.StartTime.Year
+                                  && j.StartTime.Month == appointment.StartTime.Month
+                                  && j.StartTime.Day == appointment.StartTime.Day).FirstOrDefault();
+            if (existingWaitListAppointment != null)
+                return false;
+            else
+                return true;
+        }
+        public IList<Appointment> FetchPreviousAppointmentsOfStudent(int studentId)
+        {
+            var currDate = DateTime.Now;
+            IList<Appointment> appointments = facAppData.Appointments.Where(a => a.StudentId == studentId 
+                                    && a.StartTime.Year >= currDate.Year
+                                    && a.StartTime.Month >= currDate.Month
+                                    && a.StartTime.Day >= currDate.Day
+                                    && a.AppointmentHappened == false).ToList();
+            foreach (var appointment in appointments)
+            {
+                appointment.Faculty = facAppData.Faculties.Where(a => a.FacultyId == appointment.FacultyId).FirstOrDefault();
+                appointment.Faculty.User =  facAppData.Users.Where(a => a.Uid == appointment.Faculty.Uid).FirstOrDefault();
+            }
+            return appointments;
+        }
+        public bool CancelAppointment(int appointmentId)
+        {
+            var appointment = facAppData.Appointments.Where(a => a.AppointmentId == appointmentId).FirstOrDefault();
+            facAppData.Appointments.Remove(appointment);            
+            facAppData.SaveChanges();
+            return true;
+        }
     }
 }

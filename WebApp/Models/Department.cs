@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.Models
 {
+    [Serializable]
     public class Department
     {
         public int DeptId { get; set; }

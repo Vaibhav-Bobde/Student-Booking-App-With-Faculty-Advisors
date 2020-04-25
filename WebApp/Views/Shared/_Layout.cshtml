@@ -12,9 +12,10 @@
     @Scripts.Render("~/bundles/jqueryui")
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/moment")
 </head>
 <body>
-    <!-- Navigation -->    
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
         <div class="border border-light rounded" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
@@ -28,61 +29,99 @@
         </div>
         @if (User != null)
         {
-        <div class="container" style="width:70%">
-            <a class="navbar-brand collapse navbar-collapse" href="#">
-                <h6 class="ml-auto">Hello @(User.Role.Equals("Faculty") ? "Prof. " + User.LastName : User.FirstName)!</h6>
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">
-                            @ViewBag.Title
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="~/Account/LogOut">Log Out</a>
-                    </li>
-                </ul>
+            <div class="container" style="width:70%">
+                <a class="navbar-brand collapse navbar-collapse" href="#">
+                    <h6 class="ml-auto">@ViewBag.Title</h6>
+                    <span class="sr-only">(current)</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">
+                                Hello @(User.Role.Equals("Faculty") ? "Prof. " + User.LastName : User.FirstName)!
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link my-auto" href="~/Account/LogOut">Log Out</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
         }
     </nav>
+    <div id="CommonModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="CommonModalTitle" class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body alert alert-success text-center">
+                    <p id="CommonModalBody">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">                    
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @RenderBody()
 
-   
+
     @RenderSection("scripts", required: false)
-    
+
     <script>
 
         var Common = {
-            hideMessage: function () {                
+            hideMessage: function () {
                 $(".temp-message").fadeOut();
             },
             showMessage: function (ele) {
-                $(ele).fadeIn();                
+                $(ele).fadeIn();
             },
-            onPageLoad: function () {
-                //var _this = this;
-                //$(document).ready(function () {
-                //    Object.values(_this).map(value => {
-                //        if (typeof value === 'function' && value.name === 'hideOnFocusOut') {
-                //            value.call();
-                //        }
-                //    })
-                //    $(".hide-focusout").focusout(function () {
-                //        $('.hide-focusout').animate({
-                //            display: "none"
-                //        });
-                //    })
-                //});
-            }
+            setDateAttributes: function () {
+                Date.prototype.copy = function () {
+                    return new Date(this.getTime());
+                };
+            },
+            addCustomDateFunctions: function () {
+                Date.prototype.getTimeString = function () {
+                    var hrStr = this.getHours();
+                    var minStr = this.getMinutes();
+                    if (hrStr < 10) {
+                        hrStr = '0' + hrStr;
+                    }
+                    if (minStr < 10) {
+                        minStr = '0' + minStr;
+                    }
+                    return hrStr + ':' + minStr;
+                }
+                Date.prototype.addMinutes = function (mins) {
+                    this.setMinutes(this.getMinutes() + mins);
+                }
+            },
+            ajax: function (obj) {
+                $.ajax(obj);
+            },
+            showCommonModal: function (paramObj) {
+                $('#CommonModalTitle').html(paramObj.title);
+                $('#CommonModalBody').html(paramObj.body);
+                $('#CommonModal').modal('show');
+                $('#CommonModal').on('hidden.bs.modal', function () {
+                    paramObj.onclose();
+                });
+            },
         }
-        //Common.onPageLoad();
+        $(document).ready(function () {
+            Common.setDateAttributes();
+            Common.addCustomDateFunctions();
+        });
     </script>
 </body>
 </html>

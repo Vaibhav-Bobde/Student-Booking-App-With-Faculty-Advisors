@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ServiceLayer.Interface
 {
-    public interface IFacultyService
+    public interface IDepartmentService
     {
-        IList<Faculty> FetchAllFacultiesOfDepartment(int deptId);
+        IList<Department> FetchAllDepartments();
     }
 }

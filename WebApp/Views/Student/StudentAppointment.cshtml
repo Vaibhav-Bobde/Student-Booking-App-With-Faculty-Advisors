@@ -1,4 +1,354 @@
-﻿@*@model IList<WebApp.Models.Appointment>*@
+﻿@model IList<WebApp.Models.Department>
 @{
-    ViewBag.Title = "Update Schedule";
+    ViewBag.Title = "Make Appointment";
 }
+<style>
+    html,
+    body {
+        height: 90%;
+        width: 100%;
+        margin: 0;
+        /*max-width: 100%;
+        max-height: 100%;
+        overflow-x: hidden;
+        overflow-y: hidden;*/
+    }
+
+    .ui-datepicker {
+        margin: auto;
+        width: 75%
+    }
+
+    .ui-datepicker tbody a {
+        text-align: center;
+    }
+
+    .ui-datepicker-calendar tbody td > a.hover-calendar-cell {
+        border: 1px solid #074e91;
+        background: #5bacf7 url(images/ui-bg_glass_15_5bacf7_1x400.png) 50% 50% repeat-x;
+        font-weight: normal;
+        color: #1a1a1a;
+    }
+
+    .customSidenav button {
+        position: absolute;
+        right: -140px;
+        transition: 0.3s;
+        --padding: 15px;
+        width: auto;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .customSidenav button:hover {
+        right: 0px;
+    }
+</style>
+<div style="height:100%">
+    <div class="mt-3 mx-auto form-group row border rounded container-fluid text-center justify-content-center py-3">
+        <div class="col-md-6 px-md-5">
+            <label for="slctDepartment"><strong>1. Select Department</strong></label>
+            <select class="selectpicker form-control mx-auto w-auto" data-live-search="true" id="slctDepartment">
+                <option data-tokens="None" value="0">None</option>
+                @foreach (var department in Model)
+                {
+                    <option data-tokens="@department.DeptName" value="@department.DeptId">@department.DeptName</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6 px-md-5">
+            <label for="slctFaculty"><strong>2. Select Faculty</strong></label>
+            <select class="selectpicker form-control mx-auto w-auto" data-live-search="true" id="slctFaculty">
+                <option data-tokens="None" value="0">None</option>
+            </select>
+        </div>
+        <div id="mySidenav" class="customSidenav">
+            <button id="btnPrevApp" type="button" class="btn btn-warning">Booked Appointments</button>
+        </div>
+    </div>
+
+    <div class="wrapper mb-4 mx-auto form-group row border rounded container-fluid text-center justify-content-center py-3">
+        <div class="content mb-4 col-md-6 px-md-5 border-right">
+            <label><strong>3. Select Date</strong></label>
+            <div class="w-auto">
+                <input class="d-none" type="text" id="datep" />
+                <div id="divDatepicker">
+                </div>
+            </div>
+        </div>
+        <div class="content mb-4 col-md-6 px-md-5">
+            <label><strong>4. Confirm Appointment</strong></label>
+            <div id="divConfApp" class="alert alert-info w-75 h-75 m-auto" role="alert">
+            </div>
+        </div>
+    </div>
+</div>
+<template id="tempConfApp">
+    <div class="divTemp text-center">
+        <div>
+            <label>Do you want to confirm appointment</label>
+        </div>
+        <div>
+            <label>With: &nbsp</label><strong><label class="profName"></label></strong>
+        </div>
+        <div>
+            <label>On: &nbsp</label><strong><label class="dateMsg"></label></strong>
+        </div>
+        <div>
+            <label>At: &nbsp</label><strong><label class="timeMsg"></label></strong>
+        </div>
+        <div>
+            <button type="button" id="btnConfApp" class="btnConfApp btn btn-success">Confirm Appointment</button>
+        </div>
+    </div>
+</template>
+
+<template id="tempWaitlistApp">
+    <div class="divTemp text-center">
+        <div>
+            <label>Do you want to add to waitlist your appointment</label>
+        </div>
+        <div>
+            <label>With: &nbsp</label><strong><label class="profName"></label></strong>
+        </div>
+        <div>
+            <label>On: &nbsp</label><strong><label class="dateMsg"></label></strong>
+        </div>
+        <div>
+            <button type="button" id="btnWaitlistApp" class="btnConfWaitlistApp btn btn-warning">Add To Waitlist</button>
+        </div>
+        <div class="my-3">
+            <label style="font-size: 12px;" class="alert alert-secondary">Note: You will be notified through email if a slot gets available.</label>
+        </div>
+    </div>
+</template>
+<script>
+    $(document).ready(function () {
+        StudentAppointment.setBtnPrevAppEvent();
+        StudentAppointment.setDatePicker();
+        StudentAppointment.setDepartDrpDwnEvent();
+        StudentAppointment.setDatePickChangeEvent();
+        StudentAppointment.setFacultyDrpDwnEvent();
+        StudentAppointment.setTimeSlotBtnEvent();
+        StudentAppointment.setConfBtnEvent();
+        StudentAppointment.setWaitlistSlotBtnEvent();
+        StudentAppointment.setConfWaitlistBtnEvent();
+    });
+    var StudentAppointment = {
+        setBtnPrevAppEvent: function () {
+            $('#btnPrevApp').click(function () {
+                location.href = '@Url.Action("PreviousAppointments", "Student")';
+            });
+        },
+        setDatePicker: function () {
+            var _this = this;
+            var dateToday = new Date();
+            var $datePicker = $("#divDatepicker");
+            $datePicker.datepicker({
+                changeMonth: true,
+                changeYear: true,
+                inline: true,
+                altField: "#datep",
+                minDate: dateToday,
+                beforeShowDay: function (date) {
+                    var day = date.getDay();
+                    return [(day != 0), ''];
+                }
+            });
+        },
+        setDepartDrpDwnEvent: function () {
+            $('#slctDepartment').change(function () {
+                $('#slctFaculty').empty();
+                $('#trTimeSlot').empty();
+                $('#divConfApp').empty();
+                $('#slctFaculty').append('<option data-tokens="None" value="0">None</option>');
+                let selVal = this.value;
+                if (selVal == 0)
+                    return;
+                Common.ajax({
+                    url: '@Url.Action("FetchFacultiesOfDepartment", "Student")',
+                    data: { deptId : selVal },
+                    async: false,
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (faculties, status, xhr) {
+                        $(faculties).each(function (index, faculty) {
+                            let factId = faculty.FacultyId;
+                            let factName = "Prof. " + faculty.User.Fname + " " + faculty.User.Lname;
+                            $('#slctFaculty').append('<option data-tokens="' + factName + '" value="' + factId + '">' + factName + '</option >');
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Oops! ... there is some error in the System. Please try again after some time. ")
+                    }
+                });
+            });
+        },
+        setFacultyDrpDwnEvent: function () {
+            $('#slctFaculty').change(function () {
+                $('#trTimeSlot').empty();
+                $('#divConfApp').empty();
+            });
+        },
+        setDatePickChangeEvent: function () {
+            $("#divDatepicker").change(function () {
+                if (!($('#slctFaculty').val() > 0)) {
+                    alert('Please select Faculty');
+                    return
+                }
+                var dt = new Date($("#divDatepicker").val());
+                $('#trTimeSlot').empty();
+                Common.ajax({
+                    url: '@Url.Action("FetchAvailAppointmentTimeSlots", "Student")',
+                    data: {
+                        facultyId: $('#slctFaculty').val(),
+                        selDate: dt.toISOString()
+                    },
+                    async: false,
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result, status, xhr) {
+                        var trEle = $('<tr id="trTimeSlot">');
+                        var tdEle = $('<td colspan="8"></td>');
+                        if (typeof result == 'string' && result == "Faculty Unavailable") {
+                            var divEleFactNotAvail = $('<div class="alert alert-warning"><p>Faculty is not available on the selected Date.</p><div>');
+                            tdEle.append(divEleFactNotAvail);
+                        }
+                        else {
+                            var divEle = $('<div>');
+                            if (result.length == 0) {
+                                divEle.append('<button class="btnWaitlist mx-1 my-1 btn btn-warning btn-sm">No slots Available...Add to waitlist?</button>');
+                            }
+                            $(result).each(function (index, value) {
+                                var tempStart = new Date($("#divDatepicker").val() + ' ' + value.StartTimeStr);
+                                var tempEnd = new Date($("#divDatepicker").val() + ' ' + value.EndTimeStr);
+                                while (tempStart.valueOf() < tempEnd.valueOf()) {
+                                    let startTimeStr = tempStart.getTimeString();
+                                    tempStart.addMinutes(30);
+                                    let endTimeStr = tempStart.getTimeString();
+                                    divEle.append('<button class="btnTimeSlot mx-1 my-1 btn btn-primary btn-sm" startTime="' + startTimeStr + '" endTime="' + endTimeStr + '">' + startTimeStr + ' – ' + endTimeStr + '</button>');
+                                }
+                            });
+                            tdEle.append(divEle);
+                        }
+                        trEle.append(tdEle);
+                        setTimeout(function () {
+                            $("#divDatepicker").find('.ui-datepicker-current-day').parent().after(trEle);
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Oops! ... there is some error in the System. Please try again after some time.")
+                    }
+                });
+            });
+        },
+        setTimeSlotBtnEvent: function () {
+            $(document).on('click', '.btnTimeSlot', function () {
+                $('#divConfApp').empty();
+                $('#divConfApp').fadeOut();
+                let tempEle = document.querySelector('#tempConfApp');
+                let clone = tempEle.content.cloneNode(true);
+                let tempDiv = clone.querySelector('.divTemp');
+                tempDiv.querySelector('.profName').innerText = $('#slctFaculty option:selected').text();
+                tempDiv.querySelector('.dateMsg').innerText = $("#divDatepicker").val();
+                tempDiv.querySelector('.timeMsg').innerText = $(this).text();
+                var btnConfApp = tempDiv.querySelector('.btnConfApp');
+                var startTime = $(this).attr('starttime');
+                var endTime = $(this).attr('endtime');
+                var appointment = {
+                    FacultyId: $('#slctFaculty').val(),
+                    StudentId: $('#slctDepartment').val(),
+                    StartTime: new Date($("#divDatepicker").val() + ' ' + $(this).attr('starttime')),
+                    EndTime: new Date($("#divDatepicker").val() + ' ' + $(this).attr('endtime'))
+                }
+                $(btnConfApp).data('appointment', appointment);
+                $('#divConfApp').append(tempDiv);
+                $('#divConfApp').fadeIn();
+            });
+        },
+        setWaitlistSlotBtnEvent: function () {
+            $(document).on('click', '.btnWaitlist', function () {
+                $('#divConfApp').empty();
+                $('#divConfApp').fadeOut();
+                let tempEle = document.querySelector('#tempWaitlistApp');
+                let clone = tempEle.content.cloneNode(true);
+                let tempDiv = clone.querySelector('.divTemp');
+                tempDiv.querySelector('.profName').innerText = $('#slctFaculty option:selected').text();
+                tempDiv.querySelector('.dateMsg').innerText = $("#divDatepicker").val();
+                var btnWaitlistApp = tempDiv.querySelector('#btnWaitlistApp');
+                var appointment = {
+                    FacultyId: $('#slctFaculty').val(),
+                    StudentId: $('#slctDepartment').val(),
+                    StartTime: new Date($("#divDatepicker").val()),
+                    EndTime: new Date($("#divDatepicker").val()),
+                    IsOnWaitList : true
+                }
+                $(btnWaitlistApp).data('appointment', appointment);
+                $('#divConfApp').append(tempDiv);
+                $('#divConfApp').fadeIn();
+            });
+        },
+        setConfBtnEvent: function () {
+            var _this = this;
+            $(document).on('click', '#btnConfApp', function () {
+                Common.ajax({
+                    url: '@Url.Action("MakeAppointment", "Student")',
+                    data: JSON.stringify({
+                        appointment: $(this).data('appointment')
+                    }),
+                    async: false,
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (appointments, status, xhr) {
+                        $('#trTimeSlot').empty();
+                        $('#divConfApp').empty();                        
+                        _this.showModal('Appointment Booked successfully!');
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Oops! ... there is some error in the System. Please try again after some time.");
+                    }
+                });
+            });
+        },
+        setConfWaitlistBtnEvent: function () {
+            var _this = this;
+            $(document).on('click', '#btnWaitlistApp', function () {
+                Common.ajax({
+                    url: '@Url.Action("MakeAppointment", "Student")',
+                    data: JSON.stringify({
+                        appointment: $(this).data('appointment')
+                    }),
+                    async: false,
+                    type: 'POST',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (result, status, xhr) {
+                        $('#trTimeSlot').empty();
+                        $('#divConfApp').empty();
+                        if (result == 'success') {
+                            _this.showModal('Appointment added to Waitlist');
+                        }
+                        else {
+                            alert('You are already on waitlist.')
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Oops! ... there is some error in the System. Please try again after some time.");
+                    }
+                });
+            });
+        },
+        showModal: function (text) {
+            var paramObj = {
+                title: 'Notification',
+                body: text
+            }
+            Common.showCommonModal(paramObj);
+        }
+    }
+</script>

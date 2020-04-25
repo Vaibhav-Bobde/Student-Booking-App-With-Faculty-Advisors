@@ -5,6 +5,7 @@ using System.Web;
 
 namespace WebApp.Models
 {
+    [Serializable]
     public class User
     {
         public int Uid { get; set; }

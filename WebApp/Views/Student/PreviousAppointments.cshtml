@@ -1,0 +1,121 @@
+﻿@model IList<WebApp.Models.Appointment>
+
+@{
+    ViewBag.Title = "Previous Appointments";
+}
+<style>
+    .customSidenav button {
+        position: absolute;
+        right: -140px;
+        transition: 0.3s;
+        --padding: 15px;
+        width: auto;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .customSidenav button:hover {
+        right: 0px;
+    }
+</style>
+<div id="mySidenav" class="customSidenav my-3">
+    <button id="btnMakeApp" type="button" class="btn btn-warning">Make Appointment</button>
+</div>
+<div class="container-fluid py-3 my-4 w-100">    
+    <div class="container">
+        <div>
+            <div class="row text-center">
+                <div class="col-sm border border-secondary rounded my-auto mx-2">
+                    <strong>Professor Name</strong>
+                </div>
+                <div class="col-sm border border-secondary rounded my-auto mx-2">
+                    <strong>Date</strong>
+                </div>
+                <div class="col-sm border border-secondary rounded my-auto mx-2">
+                    <strong>Start Time</strong>
+                </div>
+                <div class="col-sm border border-secondary rounded my-auto mx-2">
+                    <strong>End Time</strong>
+                </div>
+                <div class="col-sm border border-secondary rounded my-auto mx-2">
+                    <strong>Is On WaitList?</strong>
+                </div>
+                <div class="col-sm my-auto">
+
+                </div>
+            </div>
+            @foreach (var appointment in Model)
+            {
+                var startTime = appointment.IsOnWaitList ? "--" : appointment.StartTime.ToString(@"HH\:mm");
+                var endTime = appointment.IsOnWaitList ? "--" : appointment.EndTime.ToString(@"HH\:mm");
+                var isOnWaitList = appointment.IsOnWaitList ? "Yes" : "No";
+                <div class="divPrevApp row text-black-50 text-center" appointmentId='@appointment.AppointmentId'>
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">
+                        @(String.Format("Prof. {0} {1}", appointment.Faculty.User.Fname, appointment.Faculty.User.Lname))
+                    </div>
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">
+                        @appointment.StartTime.ToString(@"MM-dd-yyyy")
+                    </div>
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">
+                        @startTime
+                    </div>
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">
+                        @endTime
+                    </div>
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">
+                        @isOnWaitList
+                    </div>
+                    <div class="col-sm my-auto">
+                        <button class="btnCancelApp btn btn-danger btn-sm mx-3 my-3 w-100">Cancel Appointment</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        PreviousAppointments.setBtnCancelApp();
+        PreviousAppointments.setBtnMakeAppEvent();
+    });
+    var PreviousAppointments = {
+        setBtnCancelApp: function () {
+            $('.btnCancelApp').click(function () {
+                var appId = $(this).parents('.divPrevApp').attr('appointmentId');
+                Common.ajax({
+                    url: '@Url.Action("CancelAppointment", "Student")',
+                    data: {
+                        appointmentId: appId
+                    },
+                    async: true,
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function () {
+                        var paramObj = {
+                            title: 'Notification',
+                            body: 'Appointment Deleted successfully!',
+                            onclose: function () {
+                                location.reload();
+                            }
+                        }
+                        Common.showCommonModal(paramObj);
+                    },
+                    error: function (xhr, status, error) {
+
+                        debugger;
+                        alert("Oops! ... there is some error in the System. Please try again after some time.");
+                    }
+                });
+            });
+        },
+        setBtnMakeAppEvent: function () {
+            $('#btnMakeApp').click(function () {
+                location.href= '@Url.Action("StudentAppointment", "Student")';
+            });
+        }
+    }
+</script>
+    

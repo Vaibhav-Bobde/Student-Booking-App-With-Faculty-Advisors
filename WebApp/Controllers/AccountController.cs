@@ -68,18 +68,18 @@ namespace WebApp.Controllers
         }
         public ActionResult Home()
         {
-            RedirectToRouteResult redirectResult = RedirectToAction("Home"); ;
+            ActionResult redirectResult = RedirectToAction("Home"); ;
             string userName = User.Identity.Name;
             switch(User.Role)
             {
                 case "Admin":
-                    redirectResult = RedirectToAction("Home");
+                    redirectResult = View("Home");
                     break;
                 case "Faculty":
                     redirectResult =  RedirectToAction("GetFacultySchedule", "Faculty");
                     break;
                 case "Student":
-                    redirectResult = RedirectToAction("SetAppointment", "Student");
+                    redirectResult = RedirectToAction("StudentAppointment", "Student");
                     break;
             }
             return redirectResult;

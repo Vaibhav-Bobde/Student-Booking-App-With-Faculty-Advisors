@@ -15,6 +15,7 @@ namespace DAL
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public bool AppointmentHappened { get; set; }
+        public bool IsOnWaitList { get; set; }
         public virtual Faculty Faculty { get; set; }
         public virtual Student Student { get; set; }
     }

@@ -44,6 +44,9 @@ namespace WebApp.Common
 
             container.Register(Component.For<IUserService>().ImplementedBy<UserService>());
             container.Register(Component.For<IScheduleService>().ImplementedBy<ScheduleService>());
+            container.Register(Component.For<IDepartmentService>().ImplementedBy<DepartmentService>());
+            container.Register(Component.For<IFacultyService>().ImplementedBy<FacultyService>());
+            container.Register(Component.For<IAppointmentService>().ImplementedBy<AppointmentService>());
         }
     }
 }
