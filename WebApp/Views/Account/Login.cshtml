@@ -36,7 +36,7 @@
                                         @Html.LabelFor(model => model.Pwd, "Password")
                                     </div>
                                     <div class="editor-field">
-                                        @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
+                                        @Html.PasswordFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
                                         @Html.ValidationMessageFor(model => model.Pwd)
                                     </div>
                                 </div>
@@ -125,7 +125,7 @@
                                         @Html.LabelFor(model => model.Pwd, "Password")
                                     </div>
                                     <div class="editor-field">
-                                        @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
+                                        @Html.PasswordFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
                                         @Html.ValidationMessageFor(model => model.Pwd)
                                     </div>
                                 </div>
