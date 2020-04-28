@@ -13,6 +13,7 @@ namespace ServiceLayer.Interface
         Student FetchStudentBasedOnUserId(int userId);
         IList<Appointment> FetchAvailAppointmentTimeSlots(int facultyId, DateTime selDate, out bool isFacultyUnAvaillable);
         IList<Appointment> FetchPreviousAppointmentsOfStudent(int studentId);
+        IList<Appointment> FetchPreviousAppointmentsOfFaculty(int studentId);
         bool CancelAppointment(int appointmentId);
     }
 }

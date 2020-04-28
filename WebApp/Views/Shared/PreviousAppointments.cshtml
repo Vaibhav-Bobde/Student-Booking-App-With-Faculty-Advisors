@@ -1,7 +1,7 @@
 ﻿@model IList<WebApp.Models.Appointment>
 
 @{
-    ViewBag.Title = "Previous Appointments";
+    ViewBag.Title = "Existing Appointments";
 }
 <style>
     .customSidenav button {
@@ -20,10 +20,20 @@
         right: 0px;
     }
 </style>
-<div id="mySidenav" class="customSidenav my-3">
-    <button id="btnMakeApp" type="button" class="btn btn-warning">Make Appointment</button>
-</div>
-<div class="container-fluid py-3 my-4 w-100">    
+@if (User.Role.Equals("Faculty"))
+{
+    <div id="mySidenav" class="customSidenav my-3">
+        <button id="btnUpdateSch" type="button" class="btn btn-warning">Update Schedule</button>
+    </div>
+}
+else if(User.Role.Equals("Student"))
+{
+    <div id="mySidenav" class="customSidenav my-3">
+        <button id="btnMakeApp" type="button" class="btn btn-warning">Make Appointment</button>
+    </div>
+}
+
+<div class="container-fluid py-3 my-4 w-100">
     <div class="container">
         <div>
             <div class="row text-center">
@@ -51,9 +61,10 @@
                 var startTime = appointment.IsOnWaitList ? "--" : appointment.StartTime.ToString(@"HH\:mm");
                 var endTime = appointment.IsOnWaitList ? "--" : appointment.EndTime.ToString(@"HH\:mm");
                 var isOnWaitList = appointment.IsOnWaitList ? "Yes" : "No";
+                var name = User.Role.Equals("Faculty") ? String.Format("{0} {1}", appointment.Student.User.Fname, appointment.Student.User.Lname) : String.Format("Prof. {0} {1}", appointment.Faculty.User.Fname, appointment.Faculty.User.Lname);
                 <div class="divPrevApp row text-black-50 text-center" appointmentId='@appointment.AppointmentId'>
-                    <div class="col-sm border border-secondary rounded my-auto mx-2">
-                        @(String.Format("Prof. {0} {1}", appointment.Faculty.User.Fname, appointment.Faculty.User.Lname))
+                    <div class="col-sm border border-secondary rounded my-auto mx-2">                        
+                        @name
                     </div>
                     <div class="col-sm border border-secondary rounded my-auto mx-2">
                         @appointment.StartTime.ToString(@"MM-dd-yyyy")
@@ -79,6 +90,7 @@
     $(document).ready(function () {
         PreviousAppointments.setBtnCancelApp();
         PreviousAppointments.setBtnMakeAppEvent();
+        PreviousAppointments.setBtnUpdateSchEvent();
     });
     var PreviousAppointments = {
         setBtnCancelApp: function () {
@@ -93,19 +105,22 @@
                     type: 'GET',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function () {
-                        var paramObj = {
-                            title: 'Notification',
-                            body: 'Appointment Deleted successfully!',
-                            onclose: function () {
-                                location.reload();
+                    success: function (result) {
+                        if (result = 'success') {
+                            var paramObj = {
+                                title: 'Notification',
+                                body: 'Appointment Deleted successfully!',
+                                onclose: function () {
+                                    location.reload();
+                                }
                             }
+                            Common.showCommonModal(paramObj);
                         }
-                        Common.showCommonModal(paramObj);
+                        else {
+                            alert("Oops! ... there is some error in the System. Please try again after some time.");
+                        }
                     },
                     error: function (xhr, status, error) {
-
-                        debugger;
                         alert("Oops! ... there is some error in the System. Please try again after some time.");
                     }
                 });
@@ -115,7 +130,11 @@
             $('#btnMakeApp').click(function () {
                 location.href= '@Url.Action("StudentAppointment", "Student")';
             });
+        },
+        setBtnUpdateSchEvent: function () {
+            $('#btnUpdateSch').click(function () {
+                location.href = '@Url.Action("GetFacultySchedule", "Faculty")';
+            });
         }
     }
 </script>
-    

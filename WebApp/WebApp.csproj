@@ -142,6 +142,7 @@
     <Compile Include="Common\WindsorControllerFactory.cs" />
     <Compile Include="Common\WindsorInstaller.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FacultyController.cs" />
     <Compile Include="Controllers\StudentController.cs" />
@@ -345,11 +346,11 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Account\Home.cshtml" />
+    <Content Include="Views\Admin\Admin.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Faculty\GetFacultySchedule.cshtml" />
     <Content Include="Views\Student\StudentAppointment.cshtml" />
-    <Content Include="Views\Student\PreviousAppointments.cshtml" />
+    <Content Include="Views\Shared\PreviousAppointments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

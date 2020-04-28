@@ -3,9 +3,13 @@
 @{
     ViewBag.Title = "Login";
 }
+<style>
+    span{
+        color:red;
+    }
+</style>
 
-@*<h2>Login</h2>*@
-<div class="container">
+<div id="divLogin"class="container">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
             <div class="card card-signin my-5">
@@ -22,7 +26,7 @@
                                         @Html.LabelFor(model => model.EmailId, "User Name")
                                     </div>
                                     <div class="editor-field">
-                                        @Html.TextBoxFor(model => model.EmailId, new { @class = "input-text", placeholder = "Username" })
+                                        @Html.TextBoxFor(model => model.EmailId, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Username" })
                                         @Html.ValidationMessageFor(model => model.EmailId)
                                     </div>
                                 </div>
@@ -32,12 +36,15 @@
                                         @Html.LabelFor(model => model.Pwd, "Password")
                                     </div>
                                     <div class="editor-field">
-                                        @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text", placeholder = "Password" })
+                                        @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
                                         @Html.ValidationMessageFor(model => model.Pwd)
                                     </div>
                                 </div>
                                 <div class="mt-3">
-                                    <input class="btn btn-primary" type="submit" value="Log In" class="btn" />
+                                    <input class="btn btn-primary" type="submit" value="Log In" />
+                                </div>
+                                <div class="mt-3">
+                                    <button id="btnNewUser" type="button" class="btn btn-sm btn-link pl-0">New User?</button>
                                 </div>
                             </fieldset>
                         </div>                        
@@ -48,6 +55,120 @@
     </div>
 </div>
 
+<div id="divRegister" class="container" style="display:none">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body border rounded">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="container">
+                            <fieldset>
+                                <legend class="card-title">Register</legend>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.RoleId, "Your Role")
+                                    </div>
+                                    <div class="editor-field">
+                                        <select name="RoleId" class="form-control form-control-sm border-secondary w-50" data-live-search="true" id="slctRole">
+                                            <option value="2">Faculty</option>
+                                            <option value="3">Student</option>
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.RoleId)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.DeptId, "Your Department")
+                                    </div>
+                                    <div class="editor-field">
+                                        <select name="DeptId" class="form-control form-control-sm border-secondary w-50" data-live-search="true" id="slctDept">
+                                            @foreach (var item in ViewBag.Departments as IList<WebApp.Models.Department>)
+                                            {
+                                                <option data-tokens="@item.DeptName" value="@item.DeptId">@item.DeptName</option>
+                                            }
+                                        </select>
+                                        @Html.ValidationMessageFor(model => model.DeptId)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.Fname, "First Name")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.Fname, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "First Name" })
+                                        @Html.ValidationMessageFor(model => model.Fname)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.Lname, "Last Name")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.Lname, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Last Name" })
+                                        @Html.ValidationMessageFor(model => model.Lname)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.EmailId, "Email Id")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.EmailId, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Email Id" })
+                                        @Html.ValidationMessageFor(model => model.EmailId)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="editor-label">
+                                        @Html.LabelFor(model => model.Pwd, "Password")
+                                    </div>
+                                    <div class="editor-field">
+                                        @Html.TextBoxFor(model => model.Pwd, new { @class = "input-text form-control form-control-sm border-secondary w-50", placeholder = "Password" })
+                                        @Html.ValidationMessageFor(model => model.Pwd)
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <input class="btn btn-primary" type="submit" value="Register" />
+                                </div>
+                                <div class="mt-3">
+                                    <button id="btnGoToLogin" type="button" class="btn btn-sm btn-link pl-0">Already have an account?</button>
+                                </div>
+                            </fieldset>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
+<script>
+    $(document).ready(function () {
+        Login.setBtnNewUserEvent();
+        Login.setBtnGoToLoginEvent();
+    });
+    var Login = {
+        setBtnNewUserEvent: function () {
+            $('#btnNewUser').click(function () {
+                $('#divLogin').hide("slide", { direction: "left" }, 400);
+                setTimeout(function () {
+                    $('#divRegister').show("slide", { direction: "right" }, 400);
+                }, 425);
+                
+            });
+        },
+        setBtnGoToLoginEvent: function () {
+            $('#btnGoToLogin').click(function () {
+                $('#divRegister').hide("slide", { direction: "right" }, 400);                
+                setTimeout(function () {
+                    $('#divLogin').show("slide", { direction: "left" }, 400);
+                }, 425);
+            });
+        }
+    }    
+</script>

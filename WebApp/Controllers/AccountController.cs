@@ -16,10 +16,12 @@ namespace WebApp.Controllers
     public class AccountController : BaseController
     {
         private readonly IUserService _userService;
-        public AccountController(IUserService userService, IMapper mapper)
+        private readonly IDepartmentService _departmentService;
+        public AccountController(IUserService userService, IDepartmentService departmentService, IMapper mapper)
             : base(mapper)
         {
             this._userService = userService;
+            this._departmentService = departmentService;
         }
         [HttpGet]
         [AllowAnonymous]
@@ -29,12 +31,24 @@ namespace WebApp.Controllers
             {
                 return RedirectToAction("Home");
             }
-            return View();
+            ViewBag.Departments = _mapper.Map<IList<Department>>(this._departmentService.FetchAllDepartments());
+            return View("Login");
         }
-        
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult Login(WebApp.Models.User userDetails)
+        public ActionResult Register(User user)
+        {
+            bool status = _userService.CreateUser(_mapper.Map<ServiceLayer.Models.User>(user));
+            if (status)
+                return Login(user);
+            else
+                return Login();
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        public ActionResult Login(User userDetails)
         {
             ServiceLayer.Models.User user = _userService.GetUser(userDetails.EmailId, userDetails.Pwd);
             if (user != null)
@@ -73,7 +87,7 @@ namespace WebApp.Controllers
             switch(User.Role)
             {
                 case "Admin":
-                    redirectResult = View("Home");
+                    redirectResult = RedirectToAction("Admin", "Admin");
                     break;
                 case "Faculty":
                     redirectResult =  RedirectToAction("GetFacultySchedule", "Faculty");

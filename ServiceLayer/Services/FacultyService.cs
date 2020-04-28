@@ -13,5 +13,9 @@ namespace ServiceLayer.Services
         {
             return _mapper.Map<IList<Faculty>>(facAppDataRepo.FetchAllFacultiesOfDepartment(deptId));
         }
+        public bool EnableOrDisableFacultySchedule(int facultyId, bool isSchEditEnabled)
+        {
+            return facAppDataRepo.EnableOrDisableFacultySchedule(facultyId, isSchEditEnabled);
+        }
     }
 }

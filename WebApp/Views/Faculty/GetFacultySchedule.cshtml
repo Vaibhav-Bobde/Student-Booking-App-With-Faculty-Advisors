@@ -2,7 +2,26 @@
 @{
     ViewBag.Title = "Update Schedule";
 }
+<style>
+    .customSidenav button {
+        position: absolute;
+        right: -140px;
+        transition: 0.3s;
+        --padding: 15px;
+        width: auto;
+        text-decoration: none;
+        font-size: 20px;
+        color: white;
+        border-radius: 5px 0 0 5px;
+    }
 
+    .customSidenav button:hover {
+        right: 0px;
+    }
+</style>
+<div id="mySidenav" class="customSidenav my-3">
+    <button id="btnPrevApp" type="button" class="btn btn-warning">Existing Appointments</button>
+</div>
 <div class="mt-4 text-center">
     <h4>Please update your schedule for each day</h4>
 </div>
@@ -29,12 +48,20 @@
                     <td><input name="AvailableTillTime" class="form-control-sm" value="@strTillTime" @strDisabled /></td>
                     <td style="width:20%"><input name="IsUnavailableEntireDay" class="form-control-sm" type="checkbox" @strChecked /></td>
                 </tr>
-            }            
+            }
         </tbody>
     </table>
     <div class="text-center">
-        <button type="button" id="btnUpdateSchedule" class="btn btn-success">Update Schedule</button>
+        @if (ViewBag.IsFacultySchEnabled == true)
+        {
+            <button type="button" id="btnUpdateSchedule" class="btn btn-success">Update Schedule</button>
+        }
+        else
+        {
+            <label class="btn btn-secondary disabled">Your Schedule Edit is Disabled! Please contact Admin.</label>
+        }
     </div>
+
 </div>
 <div class="temp-message alert alert-success text-center" role="alert" style="display: none;">
     <label>Schedule Updated Successfully!</label>
@@ -87,22 +114,11 @@
                 }
             });
         });
-        $("#tblSchedule").click(function () {            
+        $("#tblSchedule").click(function () {
             $('.temp-message').fadeOut();
         });
+        $('#btnPrevApp').click(function () {
+                location.href = '@Url.Action("PreviousAppointments", "Faculty")';
+        });
     });
-    function toDate(dStr, format) {
-        var now = new Date();
-        if (format == "h:m") {
-            now.setHours(dStr.substr(0, dStr.indexOf(":")));
-            now.setMinutes(dStr.substr(dStr.indexOf(":") + 1));
-            now.setSeconds(0);
-            return now;
-        }
-        else {
-            return "Invalid Format";
-        }
-    }
-    var myDate = new Date('0001-01-01T00:00:00Z');
-    console.log(myDate.getUTCFullYear());
 </script>

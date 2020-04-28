@@ -10,5 +10,6 @@ namespace ServiceLayer.Interface
     public interface IFacultyService
     {
         IList<Faculty> FetchAllFacultiesOfDepartment(int deptId);
+        bool EnableOrDisableFacultySchedule(int facultyId, bool isSchEditEnabled);
     }
 }

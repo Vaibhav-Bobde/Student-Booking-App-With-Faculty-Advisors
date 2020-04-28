@@ -19,6 +19,7 @@ namespace DAL
         public int? Uid { get; set; }
 
         public int? DeptId { get; set; }
+        public bool IsScheduleEditEnabled { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Appointment> Appointments { get; set; }

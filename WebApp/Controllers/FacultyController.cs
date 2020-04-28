@@ -11,10 +11,12 @@ namespace WebApp.Controllers
     public class FacultyController : BaseController
     {
         private readonly IScheduleService _scheduleService;
-        public FacultyController(IScheduleService scheduleService, IMapper mapper)
+        private readonly IAppointmentService _appointmentService;
+        public FacultyController(IScheduleService scheduleService, IAppointmentService appointmentService, IMapper mapper)
             : base(mapper)
         {
             this._scheduleService = scheduleService;
+            this._appointmentService = appointmentService;
         }
         [HttpGet]
         public ActionResult GetFacultySchedule()
@@ -22,6 +24,7 @@ namespace WebApp.Controllers
             Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_scheduleService.FetchFaculty(User.Id));
             IList<Schedule> schedules = _mapper.Map<IList<ServiceLayer.Models.Schedule>, IList<Schedule>>(_scheduleService.FetchSchedule(faculty.FacultyId));
             ViewBag.FacultyId = faculty.FacultyId;
+            ViewBag.IsFacultySchEnabled = faculty.IsScheduleEditEnabled;
             return View(schedules);
         }
         [HttpPost]
@@ -30,6 +33,14 @@ namespace WebApp.Controllers
             IList<ServiceLayer.Models.Schedule> schedules = _mapper.Map<IList<Schedule>, IList<ServiceLayer.Models.Schedule>>(lstSchedule);
             bool success = _scheduleService.UpdateSchedule(schedules);
             return Json(success);
+        }
+        [HttpGet]
+        public ActionResult PreviousAppointments()
+        {
+            Faculty faculty = base._mapper.Map<ServiceLayer.Models.Faculty, Faculty>(_scheduleService.FetchFaculty(User.Id));
+            IList<Appointment> appointments = _mapper.Map<IList<Appointment>>(this._appointmentService.FetchPreviousAppointmentsOfFaculty(faculty.FacultyId));
+            appointments = appointments ?? new List<Appointment>();
+            return View("PreviousAppointments", appointments);
         }
     }
 }

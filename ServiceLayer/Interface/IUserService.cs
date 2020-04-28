@@ -10,5 +10,6 @@ namespace ServiceLayer.Interface
     public interface IUserService
     {
         User GetUser(string emailId, string pwd);
+        bool CreateUser(User user);
     }
 }

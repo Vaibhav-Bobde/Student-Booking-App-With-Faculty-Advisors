@@ -36,20 +36,7 @@ namespace ServiceLayer.Services
                 availAppointments.Add(new Appointment() { StartTime = tempStartDate, EndTime = tempEndDate });
             }
             else
-            {
-                //for (int i = 0; i < bookedAppointments.Count; i++)
-                //{
-                //    while (i < bookedAppointments.Count && startTime == bookedAppointments[i].StartTime.TimeOfDay)
-                //    {
-                //        startTime = startTime.Value.Add(TimeSpan.FromMinutes(30));
-                //        i++;
-                //    }
-                //    if (i < bookedAppointments.Count && startTime < bookedAppointments[i].StartTime.TimeOfDay)
-                //    {
-                //        DateTime tempDate = (selDate.Date + startTime) ?? DateTime.Now;
-                //        availAppointments.Add(new Appointment() { StartTime = tempDate, EndTime = bookedAppointments[i].StartTime });
-                //    }
-                //}
+            {                
                 for (int i = 0; i < bookedAppointments.Count; )
                 {
                     if (startTime < bookedAppointments[i].StartTime.TimeOfDay)
@@ -77,9 +64,34 @@ namespace ServiceLayer.Services
         {
             return _mapper.Map<IList<Appointment>>(facAppDataRepo.FetchPreviousAppointmentsOfStudent(studentId));
         }
-        public bool CancelAppointment(int appointmentId)
+        public IList<Appointment> FetchPreviousAppointmentsOfFaculty(int facultyId)
         {
-            return facAppDataRepo.CancelAppointment(appointmentId);
+            return _mapper.Map<IList<Appointment>>(facAppDataRepo.FetchPreviousAppointmentsOfFaculty(facultyId));
+        }
+        public bool CancelAppointment(int appointmentId)
+        {            
+            DAL.Appointment appToBeDeleted = facAppDataRepo.FetchAppointmentById(appointmentId);
+            bool status = true;
+            if(!appToBeDeleted.IsOnWaitList)
+            {                
+                IList<Appointment> existingAppointments = _mapper.Map<IList<Appointment>>(facAppDataRepo.FetchAllLaterAppointments(appToBeDeleted));
+                string strDate = appToBeDeleted.StartTime.ToString(@"MM-dd-yyyy");
+                string strTimeSlot = appToBeDeleted.StartTime.ToString(@"HH\:mm") + "-" + appToBeDeleted.EndTime.ToString(@"HH\:mm");
+                string profName = "Prof. " + appToBeDeleted.Faculty.User.Fname + " " + appToBeDeleted.Faculty.User.Lname;
+                string mailSubject = "Appointment slot available on " + strDate;
+                string mailBody = "Hello Student," + Environment.NewLine + Environment.NewLine
+                    + "Time slot " + strTimeSlot + " for appointment with " + profName + " is available On " + strDate + "." + Environment.NewLine
+                    + "If you want to take that slot please book it immediately through the portal or someone else may take it.";
+                foreach (var appointment in existingAppointments)
+                {
+                    status = base.SendMail(appointment.Student.User.EmailId, mailSubject, mailBody);
+                }                
+            }
+            if (status)
+            {
+                status = facAppDataRepo.CancelAppointment(appToBeDeleted);
+            }
+            return status;
         }
     }
 }

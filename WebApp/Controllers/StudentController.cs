@@ -58,13 +58,13 @@ namespace WebApp.Controllers
             Student student = _mapper.Map<Student>(_appointmentService.FetchStudentBasedOnUserId(User.Id));
             IList<Appointment> appointments = _mapper.Map<IList<Appointment>>(this._appointmentService.FetchPreviousAppointmentsOfStudent(student.StudentId));
             appointments = appointments ?? new List<Appointment>();
-            return View(appointments);
+            return View("PreviousAppointments", appointments);
         }
         [HttpGet]
         public JsonResult CancelAppointment(int appointmentId)
         {
-            this._appointmentService.CancelAppointment(appointmentId);
-            string msg = "success";
+            bool status = this._appointmentService.CancelAppointment(appointmentId);
+            string msg = status ? "success" : "error";
             return Json(msg, JsonRequestBehavior.AllowGet);
         }
     }
