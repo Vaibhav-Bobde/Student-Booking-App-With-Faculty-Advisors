@@ -23,8 +23,8 @@ namespace ServiceLayer.Services
             {
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
-                string fromEmailAddr = "matthew.gosula@gmail.com";
-                string pwd = "toughfighter6";
+                string fromEmailAddr = "{from email id}";
+                string pwd = "{password}";
                 mail.From = new MailAddress(fromEmailAddr);
                 mail.To.Add(toEmailAddr);
                 mail.Subject = subject;
